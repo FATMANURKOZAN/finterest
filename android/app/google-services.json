@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "361719362630",
+    "project_id": "deneme-cdda8",
+    "storage_bucket": "deneme-cdda8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361719362630:android:d1a7553ed957c0c6ce4647",
+        "android_client_info": {
+          "package_name": "com.example.artik_son"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO6e4BdeFIzsKe-q2zcXcqtRXZkqG_QSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361719362630:android:74ddd929a8ac89f3ce4647",
+        "android_client_info": {
+          "package_name": "tr.edu.ozal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO6e4BdeFIzsKe-q2zcXcqtRXZkqG_QSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
