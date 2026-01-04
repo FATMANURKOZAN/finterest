@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication'ı import et
-import 'package:artik_son/home.dart'; // HomePage'e yönlendirme
-import 'sign_in.dart'; // Kayıt sayfasına yönlendirme
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:artik_son/home.dart';
+import 'sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

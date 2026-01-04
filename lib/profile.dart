@@ -1,52 +1,95 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+
+  String username = "Yükleniyor...";
+  String? currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUserId = _auth.currentUser?.uid;
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    if (currentUserId == null) return;
+
+    DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(currentUserId).get();
+
+    setState(() {
+      username = userDoc['username'] ?? "Anonim";
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0), // İçerik etrafında boşluk
-      child: Center(
-        // İçeriği merkezi olarak yerleştirir
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Dikey olarak ortalar
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Yatay olarak sola hizalar
-          children: [
-            const CircleAvatar(
-              radius: 50, // Profil resmi boyutu
-              backgroundColor:
-                  Color(0xFFFBB4D1), // Profil resmi arka plan rengi
-              child: Icon(Icons.person,
-                  size: 50, color: Colors.white), // Profil simgesi
+    return Scaffold(
+      body: Column(
+        children: [
+          const SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Hoş geldiniz, $username 👋",
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16), // Resim ile metin arasında boşluk
-            const Text(
-              'Nur Kozan', // Kullanıcı adı
-              style: TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold), // Yazı stili
-            ),
-            const SizedBox(
-                height: 8), // Kullanıcı adı ile alt metin arasında boşluk
-            const Text(
-              'Email: nurkozan@gmail.com', // Kullanıcı e-posta adresi
-              style: TextStyle(fontSize: 16), // Yazı stili
-            ),
-            const SizedBox(height: 8), // E-posta ile alt metin arasında boşluk
-            const Text(
-              'Cilt Bakımı-Kombin🌸✨', // Kullanıcı hakkında bilgi
-              style: TextStyle(fontSize: 16), // Yazı stili
-            ),
-            const SizedBox(height: 16), // Alt bölümler arasında boşluk
-            ElevatedButton(
-              onPressed: () {
-                // Butona basıldığında çalışacak kod
+          ),
+          Expanded(
+            child: StreamBuilder(
+              stream: _firestore
+                  .collection('posts')
+                  .where('userId', isEqualTo: currentUserId)
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                      child: Text("Henüz fotoğraf yüklemediniz."));
+                }
+
+                final posts = snapshot.data!.docs;
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(8),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                  ),
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final post = posts[index];
+
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        post['photoUrl'],
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                );
               },
-              child: const Text('Edit Profile'), // Buton yazısı
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
